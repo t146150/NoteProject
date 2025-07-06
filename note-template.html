@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note Details</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #351159 0%, #1D0837 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .note-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+        }
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        .note-category {
+            background: #b388ff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .note-date {
+            color: #bdb7d6;
+            font-size: 14px;
+        }
+        .note-content {
+            font-size: 16px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .note-id {
+            color: #bdb7d6;
+            font-size: 12px;
+            margin-top: 16px;
+            text-align: center;
+        }
+        .back-btn {
+            background: #ff4fa2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="note-container">
+        <div class="note-header">
+            <div class="note-category" id="category">Category</div>
+            <div class="note-date" id="date">Date</div>
+        </div>
+        <div class="note-content" id="content">Content will be loaded here...</div>
+        <div class="note-id" id="noteId">Note ID: </div>
+        <button class="back-btn" onclick="window.close()">Close</button>
+    </div>
+    
+    <script>
+        // Get note data from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const noteData = JSON.parse(decodeURIComponent(urlParams.get('data') || '{}'));
+        
+        // Populate the HTML
+        document.getElementById('category').textContent = noteData.category || 'Unknown';
+        document.getElementById('date').textContent = new Date(noteData.createdAt).toLocaleString();
+        document.getElementById('content').textContent = noteData.content || 'No content';
+        document.getElementById('noteId').textContent = `Note ID: ${noteData.id || 'Unknown'}`;
+    </script>
+</body>
+</html>
