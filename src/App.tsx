@@ -14,6 +14,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { buttonStyle } from './style'; // nếu dùng đường dẫn tương đối
 import { useNavigation } from '@react-navigation/native';
 import SettingsScreen from './screens/Settings/SettingsScreen';
+import { NotesProvider } from './context/NotesContext';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 const Stack = createNativeStackNavigator();
@@ -29,15 +32,27 @@ const theme = {
 
 function TabNavigator() {
   const navigation = useNavigation();
-  
+  const insets = useSafeAreaInsets();
+
   return (
+
     <Tab.Navigator
       screenOptions={{
         tabBarStyle: {
           backgroundColor: '#1D0837',
-          height: 100,
-        },
+          height: 75 + insets.bottom,
+          paddingBottom: insets.bottom,
+          paddingTop: 8, // Thêm padding top để căn giữa tốt hơn
 
+          justifyContent: 'center',
+          alignItems: 'center',
+        },
+        tabBarItemStyle: {
+          // Căn giữa từng tab item
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingVertical: 0, // Loại bỏ padding mặc định
+        },
         tabBarShowLabel: false,
         headerShown: false,
       }}>
@@ -46,11 +61,17 @@ function TabNavigator() {
         component={HomeScreen}
         options={{
           tabBarIcon: ({ focused }) => (
-            <Image
-              source={focused ? require('./assets/images/ic_menu_home_selected.png') : require('./assets/images/ic_menu_home_unselect.png')}
-              style={{ width: 50, height: 47 }}
-              resizeMode="contain"
-            />
+            <View style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%' // Đảm bảo icon chiếm toàn bộ chiều cao
+            }}>
+              <Image
+                source={focused ? require('./assets/images/ic_menu_home_selected.png') : require('./assets/images/ic_menu_home_unselect.png')}
+                style={{ width: 50, height: 47 }}
+                resizeMode="contain"
+              />
+            </View>
           ),
         }}
       />
@@ -67,16 +88,23 @@ function TabNavigator() {
                 alignItems: 'center',
 
                 width: '100%',
-                height:  '100%',
+                height: '100%',
                 borderRadius: 30,
               }}
               onPress={() => navigation.navigate('AddNote')}
             >
-              <Image
-                source={require('./assets/images/ic_menu_add_note.png')}
-                style={{ width: 35, height: 35  }}
-                resizeMode="contain"
-              />
+              <View style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100%' // Đảm bảo icon chiếm toàn bộ chiều cao
+              }}>
+                <Image
+                  source={require('./assets/images/ic_menu_add_note.png')}
+                  style={{ width: 35, height: 35 }}
+                  resizeMode="contain"
+                />
+              </View>
+
             </TouchableOpacity>
           ),
         }}
@@ -93,50 +121,58 @@ function TabNavigator() {
         component={SummaryScreen}
         options={{
           tabBarIcon: ({ focused }) => (
-            <Image
-              source={focused ? require('./assets/images/ic_menu_summary_selected.png') : require('./assets/images/ic_menu_summary_unselect.png')}
-              style={{width: 50, height: 47  }}
-              resizeMode="contain"
-            />
+            <View style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%' // Đảm bảo icon chiếm toàn bộ chiều cao
+            }}>
+              <Image
+                source={focused ? require('./assets/images/ic_menu_summary_selected.png') : require('./assets/images/ic_menu_summary_unselect.png')}
+                style={{ width: 50, height: 47 }}
+                resizeMode="contain"
+              />
+            </View>
           ),
         }}
       />
     </Tab.Navigator>
+
   );
 }
 
 const Content = () => {
   return (
-    <NavigationContainer>
-      <StatusBar backgroundColor="#351159" barStyle="light-content" />
- 
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Tabs"
-          component={TabNavigator}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="AddNote"
-          component={AddNoteScreen}
-          options={{ presentation: 'fullScreenModal', headerShown: false, }}
-        />
-        <Stack.Screen
-          name="Settings"
-          component={SettingsScreen}
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <NotesProvider>
+      <NavigationContainer>
+        <StatusBar backgroundColor="#351159" barStyle="light-content" />
+
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Tabs"
+            component={TabNavigator}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="AddNote"
+            component={AddNoteScreen}
+            options={{ presentation: 'fullScreenModal', headerShown: false, }}
+          />
+          <Stack.Screen
+            name="Settings"
+            component={SettingsScreen}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </NotesProvider>
+
   );
 };
 
 export default function App() {
   return (
     <PaperProvider theme={theme}>
-      {/* <SettingsProvider> */}
       <Content />
-      {/* </SettingsProvider> */}
     </PaperProvider>
   );
 }

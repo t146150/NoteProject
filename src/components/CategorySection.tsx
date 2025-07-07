@@ -4,6 +4,7 @@ import { Text } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import NoteCard from './NoteCard';
 import { Note, Category } from '../types/NoteTypes';
+import { MAX_NOTE_CONTENT_LENGTH } from '../constants';
 
 const categoryIcons: Record<Category, string> = {
   'Work and Study': 'edit',
@@ -28,7 +29,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({ category, notes, onNo
     {notes.map((note) => (
       <NoteCard
         key={note.id}
-        content={note.content.slice(0, 200)}
+        content={note.content.slice(0, MAX_NOTE_CONTENT_LENGTH)}
         onPress={() => onNotePress?.(note)}
       />
     ))}

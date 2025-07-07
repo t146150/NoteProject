@@ -3,6 +3,7 @@ import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import ScreenHeader from '../../components/ScreenHeader';
 import { CATEGORIES, Category } from '../../types/NoteTypes';
+import { useNotes } from '../../context/NotesContext';
 
 const categoryAvatars: Record<Category, any> = {
   'Work and Study': require('../../assets/images/avatar_work.png'),
@@ -16,13 +17,11 @@ const categoryDisplay: Record<Category, string> = {
   'Health and Well-being': 'Health and wellness',
 };
 
-const dummyCounts: Record<Category, number> = {
-  'Work and Study': 50,
-  'Life': 12,
-  'Health and Well-being': 30,
-};
+
 
 const SummaryScreen: React.FC = () => {
+  console.log('SummaryScreen');
+  const { getSummaryByCategory } = useNotes();
   return (
     <ScreenHeader
       customHeader={
@@ -51,7 +50,7 @@ const SummaryScreen: React.FC = () => {
               </View>
               <View style={styles.recordBox}>
                 <Text style={styles.recordText}>
-                  This topic has a total of {dummyCounts[cat]} records.
+                  This topic has a total of {getSummaryByCategory(cat)} records.
                 </Text>
               </View>
             </View>
@@ -65,11 +64,10 @@ const SummaryScreen: React.FC = () => {
 const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    // alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
-    paddingTop: 22,
-    paddingBottom: 8,
+
   },
   headerTitle: {
     color: '#fff',
@@ -78,9 +76,9 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   robotImg: {
-    width: 72,
-    height: 72,
-    marginTop: -16,
+    width: 78,
+    height: 80,
+    // marginTop: 16,
     marginRight: -8,
   },
   summaryBox: {

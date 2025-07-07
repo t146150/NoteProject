@@ -1,0 +1,1 @@
+export const HTML_STATIC_UTL = 'https://t146150.github.io/NoteProject/note-template.html'

@@ -4,6 +4,7 @@ import { Text, Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ScreenHeader from '../../components/ScreenHeader';
 import { useNavigation } from '@react-navigation/native';
+import { useNotes } from '../../context/NotesContext';
 
 const settingsItems = [
   {
@@ -30,6 +31,7 @@ const settingsItems = [
 
 const SettingsScreen: React.FC = () => {
   const navigation = useNavigation();
+  const { deleteAllNotes, resetToDefault } = useNotes();
   return (
     <ScreenHeader
       customHeader={
@@ -50,20 +52,33 @@ const SettingsScreen: React.FC = () => {
             activeOpacity={0.7}
           >
             <View style={styles.itemLeft}>
-              <Icon name={item.icon} size={26} color="#b388ff" style={{ marginRight: 16 }} />
+              <View style={{ marginRight: 16 }}>
+                <Icon name={item.icon} size={26} color="#b388ff" />
+              </View>
               <Text style={styles.itemLabel}>{item.label}</Text>
             </View>
             <Icon name="chevron-right" size={28} color="#e040fb" />
           </TouchableOpacity>
         ))}
       </View>
-      <View style={styles.deleteBtnContainer}>
+      <View style={styles.buttonContainer}>
+        <Button
+          mode="contained"
+          style={styles.resetBtn}
+          labelStyle={{ fontWeight: 'bold', fontSize: 16 }}
+          onPress={() => {
+            resetToDefault();
+          }}
+          contentStyle={{ height: 48 }}
+        >
+          Reset to Default
+        </Button>
         <Button
           mode="contained"
           style={styles.deleteBtn}
           labelStyle={{ fontWeight: 'bold', fontSize: 16 }}
           onPress={() => {
-            // TODO: Xoá toàn bộ notes
+            deleteAllNotes();
           }}
           contentStyle={{ height: 48 }}
         >
@@ -109,10 +124,18 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '500',
   },
-  deleteBtnContainer: {
+  buttonContainer: {
     paddingHorizontal: 16,
     paddingBottom: 32,
     marginTop: 'auto',
+    gap: 12,
+  },
+  resetBtn: {
+    backgroundColor: '#b388ff',
+    borderRadius: 24,
+    width: '100%',
+    elevation: 0,
+    marginBottom: 20,
   },
   deleteBtn: {
     backgroundColor: '#ff4fa2',

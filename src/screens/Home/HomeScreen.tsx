@@ -2,14 +2,19 @@ import React from 'react';
 import { ScrollView, StyleSheet, View, TouchableOpacity } from 'react-native';
 import { CATEGORIES, Note } from '../../types/NoteTypes';
 import CategorySection from '../../components/CategorySection';
-import { dummyNotes } from '../../data/dummyNotes';
 import { Text } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ScreenHeader from '../../components/ScreenHeader';
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNotes } from '../../context/NotesContext';
+import { RootStackParamList } from '../../types/RootStackParamsLists';
+import { openNoteInBrowser } from './utils';
 
 const HomeScreen: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { getTopNotesByCategory } = useNotes();
+
   return (
     <ScreenHeader
       customHeader={
@@ -29,19 +34,14 @@ const HomeScreen: React.FC = () => {
       </View>
       <ScrollView style={styles.container}>
         {CATEGORIES.map((cat) => {
-          const catNotes = dummyNotes
-            .filter((n) => n.category === cat)
-            .sort((a, b) => b.createdAt - a.createdAt)
-            .slice(0, 3);
+          const catNotes = getTopNotesByCategory(cat);
           if (catNotes.length === 0) return null;
           return (
             <CategorySection
               key={cat}
               category={cat}
               notes={catNotes}
-              onNotePress={(note) => {
-                // TODO: Navigate to note detail or open link
-              }}
+              onNotePress={openNoteInBrowser}
             />
           );
         })}
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     marginBottom: 8,
-    marginTop: 12,
+    marginTop: 18,
   },
   recentText: {
     color: '#b388ff',

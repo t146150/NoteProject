@@ -5,13 +5,34 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import ScreenHeader from '../../components/ScreenHeader';
 import { CATEGORIES, Category } from '../../types/NoteTypes';
 import { useNavigation } from '@react-navigation/native';
+import { useNotes } from '../../context/NotesContext';
+import { MAX_NOTE_CONTENT_LENGTH } from '../../constants';
 
 const AddNoteScreen: React.FC = () => {
   const navigation = useNavigation();
+  const { addNote } = useNotes();
   const [category, setCategory] = useState<Category | undefined>(undefined);
   const [content, setContent] = useState('');
   const [menuVisible, setMenuVisible] = useState(false);
-  const menuAnchor = useRef<View>(null);
+
+  const handleSave = () => {
+    if (!category) {
+      // TODO: Hiển thị thông báo chọn category
+      console.log('Chưa chọn category');
+      return;
+    }
+    if (!content.trim()) {
+      console.log('Chưa nhập nội dung');
+      // TODO: Hiển thị thông báo nhập nội dung
+      return;
+    }
+    
+    addNote(category, content);
+    navigation.goBack();
+  };
+
+  const isFormValid = category && content.trim().length > 0;
+
 
   return (
     <PaperProvider>
@@ -32,7 +53,7 @@ const AddNoteScreen: React.FC = () => {
         >
           <View style={styles.formContainer}>
             {/* Dropdown chọn category */}
-            <View ref={menuAnchor}>
+            <View >
               <Menu
                 visible={menuVisible}
                 onDismiss={() => setMenuVisible(false)}
@@ -71,18 +92,24 @@ const AddNoteScreen: React.FC = () => {
               value={content}
               onChangeText={setContent}
               multiline
-              maxLength={200}
+              maxLength={MAX_NOTE_CONTENT_LENGTH}
+              textAlignVertical="top"
             />
+            <Text style={styles.charCount}>
+              {content.length}/{MAX_NOTE_CONTENT_LENGTH} characters
+            </Text>
           </View>
           {/* Nút Save stick dưới cùng */}
           <View style={styles.saveBtnContainer}>
             <Button
               mode="contained"
-              style={styles.saveBtn}
+              style={[
+                styles.saveBtn,
+                !isFormValid && styles.saveBtnDisabled
+              ]}
               labelStyle={{ fontWeight: 'bold', fontSize: 16 }}
-              onPress={() => {
-                // TODO: Save note
-              }}
+              onPress={handleSave}
+              disabled={!isFormValid}
               contentStyle={{ height: 48 }}
             >
               Save
@@ -154,6 +181,16 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     width: '100%',
     elevation: 0,
+  },
+  saveBtnDisabled: {
+    backgroundColor: 'rgba(255,79,162,0.5)',
+  },
+  charCount: {
+    color: '#b388ff',
+    fontSize: 12,
+    textAlign: 'right',
+    marginTop: 8,
+    marginBottom: 16,
   },
 });
 
